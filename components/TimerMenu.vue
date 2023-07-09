@@ -1,7 +1,7 @@
-<template>
+<template class="overflow-y-scroll">
   <slot />
   <div class="p-4">
-    <h2 class="font-bold text-4xl mt-6 mb-4">Timer:</h2>
+    <h2 class="font-bold text-4xl mt-2">Timer:</h2>
 
     <!-- <div v-if="timerOn === false" class="flex gap-4">
       <div class="w-1/3">
@@ -30,7 +30,7 @@
       </div>
     </div> -->
 
-    <div class="mt-8">
+    <div class="mt-2">
       <span class="text-8xl text-center font-bold block">{{
         displayTime
       }}</span>
@@ -50,7 +50,11 @@
   </div>
 
   <div class="p-4 border-t dark:border-gray-800">
-    <h2 class="font-bold text-4xl mt-12 mb-4">Rep Counter:</h2>
+    <h2 class="font-bold text-4xl mt-8 mb-2">Rep Counter:</h2>
+    <div class="flex items-center">
+      <span class="mr-2 text-gray-600">Start timer when rep added?</span>
+      <UCheckbox color="primary" v-model="startOnRepAdded"></UCheckbox>
+    </div>
     <div class="flex flex-col items-center">
       <span class="font-bold text-8xl my-4">{{ repCount }}</span>
       <div class="flex flex-col gap-4 w-1/2">
@@ -75,6 +79,10 @@
 <script setup lang="ts">
 const repCount = ref(0);
 function addRep() {
+  if (startOnRepAdded.value) {
+    resetTimer();
+    startTimer();
+  }
   repCount.value++;
 }
 function removeRep() {
@@ -84,6 +92,7 @@ function removeRep() {
 const timerOn = ref(false);
 let interval: any = null;
 let currentTime = ref(60);
+const startOnRepAdded = ref(false);
 
 const displayTime = computed(() => {
   let minutes = Math.floor(currentTime.value / 60).toString();
@@ -116,6 +125,14 @@ watch(timerOn, (val) => {
     }, 1000);
   } else {
     clearInterval(interval);
+  }
+});
+
+watch(currentTime, (time) => {
+  if (time <= 0) {
+    clearInterval(interval);
+    alert("Time's Up!");
+    resetTimer();
   }
 });
 </script>

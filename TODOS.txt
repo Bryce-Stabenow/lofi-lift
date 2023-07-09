@@ -1,1 +1,2 @@
 Use modal for deletion confirmation
+Add error handling to network calls

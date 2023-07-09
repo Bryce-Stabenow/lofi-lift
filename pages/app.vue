@@ -1,5 +1,6 @@
 <template>
   <div class="w-full mt-20">
+    <!-- Cateogry Navigation -->
     <nav class="flex items-center mb-6">
       <ul
         class="flex w-full justify-between dark:border-gray-800 border-b mb-2 gap-1"
@@ -18,6 +19,7 @@
       </ul>
     </nav>
 
+    <!-- Workout List -->
     <span
       v-if="filteredLifts.length === 0"
       class="block text-center text-gray-700"
@@ -28,6 +30,7 @@
       <WorkoutCard :lift="lift" @delete-lift="deleteLift(lift.id)" />
     </template>
 
+    <!-- Slideover Menus -->
     <USlideover :modelValue="addMenuOpen">
       <AddLiftMenu
         :newLift="newLift"
@@ -57,6 +60,7 @@
     </USlideover>
   </div>
 
+  <!-- Footer Buttons -->
   <footer
     class="fixed bottom-0 border-t border-gray-200 dark:border-gray-800 h-12 w-full flex justify-around"
   >
