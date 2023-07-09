@@ -25,8 +25,19 @@ const logout = async () => {
     <a href="/">
       <span class="font-bold">Lofi Lift</span>
     </a>
-    <UButton variant="transparent" :icon="colorModeIcon" @click="toggleDark" />
-    <UButton v-if="user" variant="transparent" @click="logout" :padded="false">
+    <UButton
+      variant="ghost"
+      color="white"
+      :icon="colorModeIcon"
+      @click="toggleDark"
+    />
+    <UButton
+      v-if="user"
+      variant="ghost"
+      color="white"
+      @click="logout"
+      :padded="false"
+    >
       Logout
     </UButton>
   </nav>

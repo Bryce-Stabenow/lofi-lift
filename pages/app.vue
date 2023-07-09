@@ -1,13 +1,16 @@
 <template>
-  <div class="w-full mt-24">
+  <div class="w-full mt-20">
     <nav class="flex items-center mb-6">
       <ul
-        class="flex w-full justify-between dark:border-gray-700 border-b mb-2"
+        class="flex w-full justify-between dark:border-gray-800 border-b mb-2 gap-1"
       >
         <template v-for="cat in categories">
           <li
-            class="font-bold text-primary-400 text-lg text-center flex-1 rounded-t-md dark:border-gray-700"
-            :class="[currentCategory === cat ? 'border border-b-0' : '']"
+            class="font-bold text-primary-400 text-lg text-center flex-1 rounded-t-md cursor-pointer"
+            :class="[
+              currentCategory === cat ? 'bg-gray-300 dark:bg-gray-800' : '',
+            ]"
+            @click="currentCategory = cat"
           >
             {{ cat }}
           </li>
@@ -15,47 +18,13 @@
       </ul>
     </nav>
 
-    <section
-      v-for="lift in lifts"
-      class="my-6 border rounded-md dark:border-gray-700"
+    <span v-if="filteredLifts.length === 0" class="block text-center"
+      >No workouts for {{ currentCategory }}</span
     >
-      <div
-        class="flex justify-between items-center border-b dark:border-gray-700 px-4 py-2"
-      >
-        <h3 class="font-bold text-xl flex-1 truncate">{{ lift.name }}</h3>
-        <p class="capitalize text-gray-400 dark:text-gray-700">
-          {{ lift.category }}
-        </p>
-      </div>
-      <ul v-if="lift.category !== 'cardio'" class="p-4">
-        <li v-if="lift.weight > 0">
-          <span class="text-primary-400">Weight: </span>{{ lift.weight }}
-        </li>
-        <li>
-          <span class="text-primary-400">Reps: </span>
-          <template v-for="(rep, i) in lift.reps">
-            <span v-if="rep > 0">
-              {{ i === 0 ? rep : " - " + rep }}
-            </span>
-          </template>
-        </li>
-      </ul>
-      <ul v-else class="p-4">
-        <li>
-          <span class="text-primary-400">Intensity: </span>{{ lift.speed }}
-        </li>
-        <li><span class="text-primary-400">Minutes: </span>{{ lift.time }}</li>
-      </ul>
-      <div class="flex justify-end">
-        <UButton
-          size="sm"
-          variant="ghost"
-          color="red"
-          icon="i-heroicons-outline-trash"
-          @click="deleteLift(lift.id)"
-        />
-      </div>
-    </section>
+
+    <template v-for="lift in filteredLifts">
+      <WorkoutCard :lift="lift" @deleteLift="deleteLift(lift.id)" />
+    </template>
 
     <USlideover :modelValue="addMenuOpen">
       <div class="flex justify-start pl-2 pt-2">
@@ -199,7 +168,7 @@
   </div>
 
   <footer
-    class="fixed bottom-0 border-t border-gray-200 dark:border-gray-700 h-12 w-full flex justify-around"
+    class="fixed bottom-0 border-t border-gray-200 dark:border-gray-800 h-12 w-full flex justify-around"
   >
     <UButton
       @click="timerMenuOpen = true"
@@ -238,6 +207,7 @@ const tasksFromServer = ref();
 const addMenuOpen = ref(false);
 const timerMenuOpen = ref(false);
 const loading = ref(false);
+
 const newLift = ref({
   name: "",
   category: "Push",
@@ -255,6 +225,12 @@ const { data: lifts } = await useAsyncData("lifts", async () => {
     .order("created_at");
 
   return data;
+});
+
+const filteredLifts = computed(() => {
+  return lifts.value.filter(
+    (lift: Lift) => lift.category === currentCategory.value.toLowerCase()
+  );
 });
 
 async function addLift() {
@@ -285,6 +261,9 @@ async function addLift() {
     .single();
 
   lifts.value.push(data);
+
+  currentCategory.value = newLift.value.category;
+
   newLift.value = {
     name: "",
     category: "Push",

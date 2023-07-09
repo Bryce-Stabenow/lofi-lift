@@ -3,7 +3,7 @@ export default defineAppConfig({
     primary: "orange",
     gray: "neutral",
     notifications: {
-      position: "top-3 left-0",
+      position: "bottom-8 left-0",
     },
   },
 });

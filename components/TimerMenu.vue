@@ -49,7 +49,7 @@
     </div>
   </div>
 
-  <div class="p-4 border-t dark:border-gray-700">
+  <div class="p-4 border-t dark:border-gray-800">
     <h2 class="font-bold text-4xl mt-12 mb-4">Rep Counter:</h2>
     <div class="flex flex-col items-center">
       <span class="font-bold text-8xl my-4">{{ repCount }}</span>
