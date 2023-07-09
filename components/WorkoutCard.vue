@@ -38,6 +38,8 @@
 </template>
 
 <script setup lang="ts">
+defineEmits(["deleteLift"]);
+
 defineProps({
   lift: {
     type: Object,
