@@ -1,4 +1,4 @@
-<template class="overflow-y-scroll">
+<template>
   <slot />
   <div class="p-4">
     <h2 class="font-bold text-4xl mt-2">Timer:</h2>

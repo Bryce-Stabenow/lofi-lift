@@ -27,7 +27,7 @@
     >
 
     <template v-for="lift in filteredLifts">
-      <WorkoutCard :lift="lift" @delete-lift="deleteLift(lift.id)" />
+      <WorkoutCard :lift="lift" @inspect-lift="inspectLift" />
     </template>
 
     <!-- Slideover Menus -->
@@ -60,6 +60,17 @@
     </USlideover>
   </div>
 
+  <UModal v-model="inspectModalOpen">
+    <section class="p-4">
+      <EditLiftMenu
+        :lift="inspectedLift"
+        :categories="categories"
+        @update-lift="updateLift"
+        @delete-lift="deleteLift"
+      />
+    </section>
+  </UModal>
+
   <!-- Footer Buttons -->
   <footer
     class="fixed bottom-0 border-t border-gray-200 dark:border-gray-800 h-12 w-full flex justify-around"
@@ -84,7 +95,6 @@
 </template>
 
 <script setup lang="ts">
-import { registerRuntimeCompiler } from "nuxt/dist/app/compat/capi";
 import { Database } from "~~/types/database.types";
 import { Lift, CategoryEnums } from "~~/types/lifts";
 
@@ -102,6 +112,8 @@ const tasksFromServer = ref();
 const addMenuOpen = ref(false);
 const timerMenuOpen = ref(false);
 const loading = ref(false);
+const inspectedLift = ref(null);
+const inspectModalOpen = ref(false);
 
 const newLift = ref({
   name: "",
@@ -113,18 +125,30 @@ const newLift = ref({
 });
 
 const { data: lifts } = await useAsyncData("lifts", async () => {
-  const { data } = await client
+  const { data, error } = await client
     .from("lifts")
     .select("id, name, category, weight, time, speed, reps")
     .eq("user_id", user.value.id)
     .order("created_at");
+
+  if (error !== null) {
+    toast.add({
+      id: "error",
+      title: "Error",
+      description: "Something went wrong...",
+      color: "red",
+      icon: "i-heroicons-outline-exclamation-triangle",
+    });
+
+    return;
+  }
 
   return data;
 });
 
 const filteredLifts = computed(() => {
   return lifts.value.filter(
-    (lift: Lift) => lift.category === currentCategory.value.toLowerCase()
+    (lift: Lift) => lift.category === currentCategory.value
   );
 });
 
@@ -141,12 +165,12 @@ async function addLift() {
 
   loading.value = true;
 
-  const { data } = await client
+  const { data, error } = await client
     .from("lifts")
     .upsert({
       user_id: user.value.id,
       name: newLift.value.name,
-      category: newLift.value.category.toLowerCase(),
+      category: newLift.value.category,
       weight: newLift.value.weight,
       time: newLift.value.time,
       speed: newLift.value.speed,
@@ -154,6 +178,19 @@ async function addLift() {
     })
     .select("id, name, category, weight, time, speed, reps")
     .single();
+
+  if (error !== null) {
+    toast.add({
+      id: "error",
+      title: "Error",
+      description: "Something went wrong...",
+      color: "red",
+      icon: "i-heroicons-outline-exclamation-triangle",
+    });
+
+    loading.value = false;
+    return;
+  }
 
   lifts.value.push(data);
 
@@ -179,17 +216,72 @@ async function addLift() {
   });
 }
 
-// const completeTask = async (task: Task) => {
-//   await client.from('tasks').update({ completed: task.completed }).match({ id: task.id })
-// }
+const updateLift = async () => {
+  if (inspectedLift.value === null) return;
+
+  loading.value = true;
+
+  const { error } = await client
+    .from("lifts")
+    .update({
+      user_id: user.value.id,
+      name: inspectedLift.value.name,
+      category: inspectedLift.value.category,
+      weight: inspectedLift.value.weight,
+      time: inspectedLift.value.time,
+      speed: inspectedLift.value.speed,
+      reps: inspectedLift.value.reps,
+    })
+    .eq("id", inspectedLift.value.id);
+
+  inspectModalOpen.value = false;
+
+  loading.value = false;
+
+  if (error === null) {
+    toast.add({
+      id: "lifts_updated",
+      title: "Lift Updated",
+      description: "",
+      icon: "i-heroicons-outline-check-circle",
+      timeout: 3000,
+    });
+  } else {
+    toast.add({
+      id: "error",
+      title: "Error",
+      description: "Something went wrong...",
+      color: "red",
+      icon: "i-heroicons-outline-exclamation-triangle",
+    });
+  }
+};
 
 const deleteLift = async (liftId: number) => {
   const prompt = confirm("Delete this lift forever?");
   if (!prompt) return;
 
-  await client.from("lifts").delete().match({ id: liftId });
+  loading.value = true;
+
+  const { error } = await client.from("lifts").delete().match({ id: liftId });
+
+  inspectModalOpen.value = false;
+
+  if (error !== null) {
+    toast.add({
+      id: "error",
+      title: "Error",
+      description: "Something went wrong...",
+      color: "red",
+      icon: "i-heroicons-outline-exclamation-triangle",
+    });
+
+    loading.value = false;
+    return;
+  }
 
   lifts.value = lifts.value.filter((lift: Lift) => lift.id !== liftId);
+  loading.value = false;
 
   toast.add({
     id: "lifts_deleted",
@@ -202,12 +294,27 @@ const deleteLift = async (liftId: number) => {
 
 const fetchLiftsFromServerRoute = async () => {
   loading.value = true;
-  const { data } = await useFetch("/api/lifts", {
+  const { data, error } = await useFetch("/api/lifts", {
     headers: useRequestHeaders(["cookie"]),
     key: "tasks-from-server",
   });
 
+  if (error !== null) {
+    toast.add({
+      id: "error",
+      title: "Error",
+      description: "Something went wrong...",
+      color: "red",
+      icon: "i-heroicons-outline-exclamation-triangle",
+    });
+
+    loading.value = false;
+    return;
+  }
+
   tasksFromServer.value = data;
+  loading.value = false;
+
   toast.add({
     id: "lifts_updated",
     title: "Lifts Updated!",
@@ -215,8 +322,12 @@ const fetchLiftsFromServerRoute = async () => {
     icon: "i-heroicons-outline-check-circle",
     timeout: 3000,
   });
-  loading.value = false;
 };
+
+function inspectLift(id: number) {
+  inspectedLift.value = lifts.value.find((lift: Lift) => lift.id === id);
+  inspectModalOpen.value = true;
+}
 </script>
 
 <style scoped></style>

@@ -29,16 +29,16 @@
       <UButton
         size="sm"
         variant="ghost"
-        color="red"
-        icon="i-heroicons-outline-trash"
-        @click="$emit('deleteLift')"
+        color="white"
+        icon="i-heroicons-pencil-square"
+        @click="$emit('inspectLift', lift.id)"
       />
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
-defineEmits(["deleteLift"]);
+defineEmits(["deleteLift", "inspectLift"]);
 
 defineProps({
   lift: {
