@@ -1,15 +1,17 @@
 <template>
   <div class="w-full mt-20">
     <!-- Cateogry Navigation -->
-    <nav class="flex items-center mb-6">
+    <nav
+      class="flex flex-col items-center mb-8 pt-6 sticky top-6 bg-white dark:bg-gray-900 z-40"
+    >
       <ul
-        class="flex w-full justify-between dark:border-gray-800 border-b mb-2 gap-1"
+        class="flex w-full justify-between dark:border-gray-700 border-b gap-1"
       >
         <template v-for="cat in categories">
           <li
             class="font-bold text-primary-400 text-lg text-center flex-1 rounded-t-md cursor-pointer"
             :class="[
-              currentCategory === cat ? 'bg-gray-300 dark:bg-gray-800' : '',
+              currentCategory === cat ? 'bg-gray-300 dark:bg-gray-700' : '',
             ]"
             @click="currentCategory = cat"
           >
@@ -17,6 +19,7 @@
           </li>
         </template>
       </ul>
+      <div class="fade"></div>
     </nav>
 
     <!-- Workout List -->
@@ -29,6 +32,8 @@
     <template v-for="lift in filteredLifts">
       <WorkoutCard :lift="lift" @inspect-lift="inspectLift" />
     </template>
+
+    <div class="h-24"></div>
 
     <!-- Slideover Menus -->
     <USlideover :modelValue="addMenuOpen">
@@ -73,16 +78,18 @@
 
   <!-- Footer Buttons -->
   <footer
-    class="fixed bottom-0 border-t border-gray-200 dark:border-gray-800 h-12 w-full flex justify-around"
+    class="fixed bottom-0 border-t border-gray-200 dark:border-gray-700 h-12 w-full flex justify-around bg-white dark:bg-gray-900 z-50"
   >
     <UButton
       @click="timerMenuOpen = true"
       icon="i-heroicons-clock"
       variant="ghost"
+      size="xl"
     ></UButton>
     <UButton
       icon="i-heroicons-arrow-path"
       variant="ghost"
+      size="xl"
       :loading="loading"
       @click="fetchLiftsFromServerRoute"
     ></UButton>
@@ -90,6 +97,7 @@
       @click="addMenuOpen = true"
       icon="i-heroicons-plus-circle"
       variant="ghost"
+      size="xl"
     ></UButton>
   </footer>
 </template>
@@ -294,23 +302,10 @@ const deleteLift = async (liftId: number) => {
 
 const fetchLiftsFromServerRoute = async () => {
   loading.value = true;
-  const { data, error } = await useFetch("/api/lifts", {
+  const { data } = await useFetch("/api/lifts", {
     headers: useRequestHeaders(["cookie"]),
     key: "tasks-from-server",
   });
-
-  if (error !== null) {
-    toast.add({
-      id: "error",
-      title: "Error",
-      description: "Something went wrong...",
-      color: "red",
-      icon: "i-heroicons-outline-exclamation-triangle",
-    });
-
-    loading.value = false;
-    return;
-  }
 
   tasksFromServer.value = data;
   loading.value = false;
@@ -330,4 +325,8 @@ function inspectLift(id: number) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.fade {
+  @apply w-full h-12 -mb-12 bg-gradient-to-b from-gray-900 bg-opacity-40;
+}
+</style>

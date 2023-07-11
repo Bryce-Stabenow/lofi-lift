@@ -49,7 +49,7 @@
     </div>
   </div>
 
-  <div class="p-4 border-t dark:border-gray-800">
+  <div class="p-4 border-t dark:border-gray-700">
     <h2 class="font-bold text-4xl mt-8 mb-2">Rep Counter:</h2>
     <div class="flex items-center">
       <span class="mr-2 text-gray-600">Start timer when rep added?</span>

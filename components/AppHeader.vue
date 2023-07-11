@@ -20,7 +20,9 @@ const logout = async () => {
 </script>
 
 <template>
-  <nav class="flex justify-between px-2 items-center fixed top-0 w-full">
+  <nav
+    class="flex justify-between px-2 items-center fixed top-0 w-full bg-white dark:bg-gray-900 z-50"
+  >
     <Title>Lofi Lift</Title>
     <a href="/">
       <span class="font-bold">Lofi Lift</span>
