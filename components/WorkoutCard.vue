@@ -4,7 +4,7 @@
       class="flex justify-between items-center border-b dark:border-gray-700 px-4 py-2 rounded-t-md border-l-4 !border-l-primary-400"
     >
       <h3 class="font-bold text-xl flex-1 truncate">{{ lift.name }}</h3>
-      <p class="capitalize text-gray-400 dark:text-gray-700">
+      <p class="capitalize text-gray-400 dark:text-gray-700 ml-2">
         {{ lift.category }}
       </p>
     </div>

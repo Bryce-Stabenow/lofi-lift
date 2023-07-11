@@ -327,6 +327,6 @@ function inspectLift(id: number) {
 
 <style scoped>
 .fade {
-  @apply w-full h-12 -mb-12 bg-gradient-to-b from-gray-900 bg-opacity-40;
+  @apply w-full h-12 -mb-12 bg-gradient-to-b from-white dark:from-gray-900 bg-opacity-60;
 }
 </style>
