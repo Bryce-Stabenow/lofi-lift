@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full mt-20">
+  <div class="max-w-xl w-full mt-20">
     <!-- Cateogry Navigation -->
     <nav
       class="flex flex-col items-center mb-8 pt-6 sticky top-6 bg-white dark:bg-gray-900 z-40"
