@@ -1,3 +1,14 @@
+<script setup lang="ts">
+const user = useSupabaseUser();
+const { auth } = useSupabaseAuthClient();
+
+watchEffect(() => {
+  if (user.value) {
+    navigateTo("/app");
+  }
+});
+</script>
+
 <template>
   <main class="flex flex-col">
     <section>
