@@ -45,10 +45,10 @@
         We keep track of your current weight, reps, and exercise so you can
         focus on improving yourself every day.
       </p>
-      <NuxtImg
+      <img
         src="/workouts.png"
         class="w-3/4 mx-auto h-[370px] object-cover object-top mt-6 rounded-t-xl"
-      ></NuxtImg>
+      />
     </section>
 
     <section
@@ -59,10 +59,10 @@
         Keep track of your sets and the time for rests with a built-in timer.
         Check the box to let us start your rest timer after your set
       </p>
-      <NuxtImg
+      <img
         src="/tracker.png"
         class="w-3/4 mx-auto h-[350px] object-cover object-top mt-6 rounded-t-xl"
-      ></NuxtImg>
+      />
     </section>
 
     <section
@@ -72,10 +72,10 @@
       <p class="mt-2">
         Keep things basic. Add lifts where they count to target specific areas.
       </p>
-      <NuxtImg
+      <img
         src="/categories.png"
         class="w-3/4 mx-auto h-[250px] object-cover object-top mt-6 rounded-t-xl"
-      ></NuxtImg>
+      />
     </section>
 
     <section
@@ -87,15 +87,15 @@
       </p>
 
       <div class="flex flex-row gap-4">
-        <NuxtImg
+        <img
           src="/light-mode.png"
           class="w-1/2 mx-auto h-[250px] object-cover object-top mt-6 rounded-t-xl"
-        ></NuxtImg>
+        />
 
-        <NuxtImg
+        <img
           src="/dark-mode.png"
           class="w-1/2 mx-auto h-[250px] object-cover object-top mt-6 rounded-t-xl"
-        ></NuxtImg>
+        />
       </div>
     </section>
   </main>
